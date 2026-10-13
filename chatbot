@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Jak přemýšlíš o společnosti?</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial, Helvetica, sans-serif;
+background:#f4f6f9;
+margin:0;
+padding:20px;
+color:#333;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:16px;
+box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+h1{
+text-align:center;
+margin-bottom:10px;
+}
+
+.subtitle{
+text-align:center;
+color:#666;
+margin-bottom:30px;
+}
+
+.progress{
+height:12px;
+background:#e3e3e3;
+border-radius:20px;
+overflow:hidden;
+margin-bottom:30px;
+}
+
+.progress-inner{
+height:100%;
+background:#2e7d32;
+width:0%;
+transition:.3s;
+}
+
+.question-number{
+font-size:14px;
+color:#666;
+margin-bottom:20px;
+}
+
+.statement{
+background:#f5f8ff;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+line-height:1.5;
+}
+
+.statement strong{
+display:block;
+margin-bottom:5px;
+color:#0d47a1;
+}
+
+.buttons{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:10px;
+margin-top:20px;
+}
+
+button{
+
+border:none;
+padding:15px 10px;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+font-size:14px;
+transition:.2s;
+}
+
+button:hover{
+transform:translateY(-2px);
+}
+
+.aStrong{background:#1565c0;color:white;}
+.aLight{background:#64b5f6;color:white;}
+.neutral{background:#eceff1;}
+.bLight{background:#ffb74d;}
+.bStrong{background:#ef6c00;color:white;}
+
+#result{
+display:none;
+}
+
+#profileText{
+font-size:18px;
+line-height:1.8;
+background:#f8fafc;
+padding:20px;
+border-radius:12px;
+}
+
+.compass-container{
+display:flex;
+justify-content:center;
+margin:40px 0;
+overflow:auto;
+}
+
+.compass{
+
+position:relative;
+width:650px;
+height:650px;
+background:#efefef;
+border:1px dashed #bdbdbd;
+}
+
+.axis-horizontal{
+position:absolute;
+top:50%;
+left:0;
+width:100%;
+height:3px;
+background:black;
+}
+
+.axis-vertical{
+position:absolute;
+left:50%;
+top:0;
+height:100%;
+width:3px;
+background:black;
+}
+
+.axis-label{
+position:absolute;
+font-weight:bold;
+font-size:28px;
+}
+
+.top{
+top:-45px;
+left:50%;
+transform:translateX(-50%);
+}
+
+.bottom{
+bottom:-45px;
+left:50%;
+transform:translateX(-50%);
+}
+
+.left{
+left:-60px;
+top:50%;
+transform:translateY(-50%) rotate(-90deg);
+}
+
+.right{
+right:-60px;
+top:50%;
+transform:translateY(-50%) rotate(90deg);
+}
+
+.center-label{
+position:absolute;
+font-size:14px;
+color:#777;
+}
+
+.c1{
+left:48%;
+top:47%;
+}
+
+.c2{
+left:18%;
+top:18%;
+}
+
+.c3{
+right:18%;
+bottom:18%;
+}
+
+.marker{
+position:absolute;
+width:22px;
+height:22px;
+background:red;
+border:3px solid white;
+border-radius:50%;
+box-shadow:0 0 12px rgba(0,0,0,.4);
+transition:.5s;
+}
+
+.pop-bar{
+position:relative;
+height:30px;
+border-radius:20px;
+overflow:hidden;
+margin-top:20px;
+}
+
+.gradient{
+height:100%;
+background:linear-gradient(
+90deg,
+#2ecc71 0%,
+#9ccc65 25%,
+#f4d03f 50%,
+#f39c12 75%,
+#e74c3c 100%
+);
+}
+
+.pop-marker{
+position:absolute;
+top:-5px;
+width:4px;
+height:40px;
+background:black;
+}
+
+.pop-text{
+margin-top:20px;
+font-size:18px;
+line-height:1.6;
+}
+
+footer{
+margin-top:30px;
+text-align:center;
+color:#666;
+font-size:14px;
+}
+
+@media(max-width:700px){
+
+.buttons{
+grid-template-columns:1fr;
+}
+
+.compass{
+width:500px;
+height:500px;
+}
+
+.axis-label{
+font-size:20px;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card" id="quiz">
+
+<h1>Jak přemýšlíš o společnosti?</h1>
+
+<p class="subtitle">
+Neexistují správné ani špatné odpovědi. Vyber vždy možnost,
+která je bližší tvému názoru.
+</p>
+
+<div class="progress">
+<div class="progress-inner" id="progressBar"></div>
+</div>
+
+<div id="questionBox"></div>
+
+</div>
+
+<div class="card" id="result">
+
+<h1>Tvůj výsledek</h1>
+
+<p id="profileText"></p>
+
+<h2>📍 Tvoje pozice na mapě názorů</h2>
+
+<div class="compass-container">
+
+<div class="compass">
+
+<div class="axis-horizontal"></div>
+<div class="axis-vertical"></div>
+
+<div class="axis-label top">LIBERÁLNÍ</div>
+<div class="axis-label bottom">KONZERVATIVNÍ</div>
+
+<div class="axis-label left">LEVICE</div>
+<div class="axis-label right">PRAVICE</div>
+
+<div class="center-label c1">0 %</div>
+<div class="center-label c2">50 %</div>
+<div class="center-label c3">50 %</div>
+
+<div class="marker" id="marker"></div>
+
+</div>
+
+</div>
+
+<h2>🧠 Náchylnost k populismu</h2>
+
+<div class="pop-bar">
+<div class="gradient"></div>
+<div class="pop-marker" id="popMarker"></div>
+</div>
+
+<div class="pop-text" id="popText"></div>
+
+</div>
+
+<footer>
+Školní volební kalkulačka • Výsledek neslouží jako doporučení volby konkrétní strany.
+</footer>
+
+</div>
+
+<script>
+
+const questions=[
+
+{a:"Město by mělo stavět více dostupných bytů.",b:"Byty by měli stavět hlavně soukromí investoři.",x:-2},
+
+{a:"Veřejná doprava by měla být levná nebo zdarma pro mladé.",b:"Každý by měl platit podle využití dopravy.",x:-2},
+
+{a:"Podnikatelé by měli mít co nejméně překážek.",b:"Stát by měl podnikání více regulovat.",x:2},
+
+{a:"Město by mělo hospodařit opatrně.",b:"Město má více investovat do rozvoje.",x:2},
+
+{a:"Zdravotní péče má být stejná pro všechny.",b:"Lidé si mají více rozhodovat o péči sami.",x:-2},
+
+{a:"Peníze mají jít hlavně na služby.",b:"Přednost má snižování dluhů.",x:-2},
+
+{a:"Společnost má být otevřená novým způsobům života.",b:"Společnost má chránit hlavně tradice.",y:2},
+
+{a:"Tradiční hodnoty mají hrát důležitou roli.",b:"Důležitější je přizpůsobovat se nové době.",y:-2},
+
+{a:"Mladí lidé by měli více rozhodovat.",b:"Více by měli rozhodovat zkušenější lidé.",y:2},
+
+{a:"Školy mají více využívat umělou inteligenci.",b:"Hlavní je práce učitelů.",y:2},
+
+{a:"Je důležité poznávat jiné kultury.",b:"Je důležitější chránit vlastní tradice.",y:2},
+
+{a:"Lidé mají žít podle svého.",b:"Společnost má nastavovat více pravidel.",y:2},
+
+{a:"Technologie přinášejí více výhod.",b:"Technologie přinášejí více rizik.",y:2},
+
+{a:"Ochrana přírody je důležitější.",b:"Důležitější je rozvoj města.",x:-1,y:1},
+
+{a:"Více cyklostezek.",b:"Více silnic a parkování.",x:-1,y:1},
+
+{a:"Více stromů i za cenu méně parkovacích míst.",b:"Parkování je důležitější.",x:-1,y:1},
+
+{a:"Školy, knihovny a sportovní haly by měly využívat obnovitelné zdroje energie.",b:"Důležitější je co nejnižší cena energie.",x:-1,y:1},
+
+{a:"Je lepší stavět více bytů.",b:"Je lepší více chránit zeleň.",x:1,y:-1},
+
+{a:"Většinu věcí na úřadě má jít vyřídit online.",b:"Hlavní má být osobní kontakt.",y:1},
+
+{a:"Bezpečnost je důležitější než soukromí.",b:"Soukromí je důležitější.",y:-1},
+
+{a:"Jednoduchým řešením složitých problémů je třeba nedůvěřovat.",b:"Jednoduchá řešení bývají správná.",pop:true},
+
+{a:"Je dobré ověřovat informace z více zdrojů.",b:"Stačí důvěřovat jednomu ověřenému zdroji.",pop:true},
+
+{a:"Ve škole by mělo být více finanční gramotnosti.",b:"Hlavní mají zůstat tradiční předměty.",x:1},
+
+{a:"Občané by měli více rozhodovat sami.",b:"Rozhodování mají nechat odborníkům.",y:1,pop:true},
+
+{a:"Důležitá je rovnost příležitostí.",b:"Každý si má úspěch zařídit hlavně sám.",x:-2}
+
+];
+
+let current=0;
+let answers=[];
+
+function renderQuestion(){
+
+const q=questions[current];
+
+document.getElementById("progressBar").style.width=
+(current/questions.length*100)+"%";
+
+document.getElementById("questionBox").innerHTML=`
+
+<div class="question-number">
+Otázka ${current+1} z ${questions.length}
+</div>
+
+<div class="statement">
+<strong>A</strong>
+${q.a}
+</div>
+
+<div class="statement">
+<strong>B</strong>
+${q.b}
+</div>
+
+<div class="buttons">
+
+<button class="aStrong" onclick="answer(-2)">
+Určitě A
+</button>
+
+<button class="aLight" onclick="answer(-1)">
+Spíše A
+</button>
+
+<button class="neutral" onclick="answer(0)">
+Neutrální
+</button>
+
+<button class="bLight" onclick="answer(1)">
+Spíše B
+</button>
+
+<button class="bStrong" onclick="answer(2)">
+Určitě B
+</button>
+
+</div>
+`;
+}
+
+function answer(value){
+
+answers.push(value);
+current++;
+
+if(current<questions.length){
+renderQuestion();
+}else{
+showResult();
+}
+}
+
+function showResult(){
+
+let x=0;
+let y=0;
+
+let pop=0;
+let popCount=0;
+
+questions.forEach((q,index)=>{
+
+let a=answers[index];
+
+if(q.x) x+=a*q.x;
+if(q.y) y+=a*q.y;
+
+if(q.pop){
+
+popCount++;
+
+if(a>0){
+pop += a*25;
+}
+
+}
+});
+
+x=Math.max(-100,Math.min(100,x*2));
+y=Math.max(-100,Math.min(100,y*2));
+
+let popScore=Math.round(
+Math.min(100,(pop/(popCount*50))*100)
+);
+
+document.getElementById("quiz").style.display="none";
+document.getElementById("result").style.display="block";
+
+drawCompass(x,y);
+
+document.getElementById("profileText").innerHTML=
+generateProfile(x,y,popScore);
+
+drawPopulism(popScore);
+
+window.scrollTo(0,0);
+}
+
+function drawCompass(x,y){
+
+const marker=document.getElementById("marker");
+
+const center=325;
+
+const posX=center+(x*2.5);
+const posY=center-(y*2.5);
+
+marker.style.left=(posX-11)+"px";
+marker.style.top=(posY-11)+"px";
+}
+
+function drawPopulism(score){
+
+document.getElementById("popMarker").style.left=
+score+"%";
+
+let text="";
+
+if(score<25){
+
+text=
+"<strong>"+score+" %</strong><br><br>Tvé odpovědi ukazují vysokou odolnost vůči populistickým tvrzením. Obvykle dáváš přednost ověřování informací a opatrnosti vůči příliš jednoduchým řešením.";
+
+}
+else if(score<50){
+
+text=
+"<strong>"+score+" %</strong><br><br>Informace většinou hodnotíš kriticky, ale některé jednodušší argumenty tě mohou oslovit.";
+
+}
+else if(score<75){
+
+text=
+"<strong>"+score+" %</strong><br><br>Někdy dáváš přednost jednoduchým vysvětlením složitých problémů. Vyplatí se více porovnávat různé zdroje informací.";
+
+}
+else{
+
+text=
+"<strong>"+score+" %</strong><br><br>Častěji důvěřuješ jednoduchým řešením složitých problémů. Zkus se zaměřit na ověřování informací z více stran.";
+
+}
+
+document.getElementById("popText").innerHTML=text;
+}
+
+function generateProfile(x,y,pop){
+
+let ekonomika="";
+let spolecnost="";
+
+if(x<-20){
+
+ekonomika=
+"V ekonomických otázkách se přikláníš spíše k větší solidaritě, veřejným službám a podpoře lidí prostřednictvím veřejných institucí.";
+
+}
+else if(x>20){
+
+ekonomika=
+"V ekonomických otázkách více zdůrazňuješ osobní odpovědnost, samostatnost a menší zásahy veřejných institucí.";
+
+}
+else{
+
+ekonomika=
+"V ekonomických otázkách se pohybuješ blízko středu a posuzuješ jednotlivé situace spíše pragmaticky než ideologicky.";
+
+}
+
+if(y>20){
+
+spolecnost=
+"Ve společenských otázkách jsi otevřenější novým myšlenkám, technologiím a společenským změnám.";
+
+}
+else if(y<-20){
+
+spolecnost=
+"Ve společenských otázkách dáváš větší důraz na tradice, stabilitu a opatrnější tempo změn.";
+
+}
+else{
+
+spolecnost=
+"Ve společenských otázkách kombinuješ otevřenost novým myšlenkám s respektem k tradicím a osvědčeným postupům.";
+
+}
+
+let kritika="";
+
+if(pop<30){
+
+kritika=
+"Současně se ukazuje vysoká míra kritického myšlení a opatrnosti vůči jednoduchým slibům a rychlým řešením.";
+
+}
+else if(pop<60){
+
+kritika=
+"Většinu informací hodnotíš poměrně kriticky, ale některé jednodušší argumenty pro tebe mohou být přesvědčivé.";
+
+}
+else{
+
+kritika=
+"Výsledek naznačuje, že tě mohou častěji oslovit jednodušší vysvětlení složitých problémů a vyplatí se více porovnávat různé zdroje informací.";
+
+}
+
+return `
+${ekonomika}
+<br><br>
+${spolecnost}
+<br><br>
+Tvoje odpovědi ukazují vlastní a poměrně konzistentní pohled na fungování společnosti, školství, životního prostředí i veřejných institucí.
+<br><br>
+${kritika}
+<br><br>
+Výsledek neříká, koho bys měl volit ani ke které straně patříš. Ukazuje pouze, jaké hodnoty a postoje se nejčastěji objevily ve tvých odpovědích.
+`;
+}
+
+renderQuestion();
+
+</script>
+
+</body>
+</html>
